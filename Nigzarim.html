@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>TA-35 Options Simulator</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --bg-alt: #111827;
+            --bg-alt2: #020617;
+            --card: #020617;
+            --accent: #22c55e;
+            --danger: #ef4444;
+            --border: #1f2937;
+            --border-soft: #111827;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --muted-strong: #6b7280;
+            --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at top, #111827 0, #020617 55%);
+            color: var(--text);
+            font-family: var(--font);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 1300px;
+            padding: 24px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .subtitle {
+            margin-bottom: 24px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card {
+            background: radial-gradient(circle at top left, #111827 0, #020617 45%);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 16px 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .section-header .pill {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border-soft);
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--muted);
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 140px;
+        }
+
+        .field-group label {
+            font-size: 11px;
+            color: var(--muted-strong);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .field-group input {
+            background: var(--bg-alt2);
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            color: var(--text);
+            font-size: 13px;
+            outline: none;
+            transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .field-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2);
+            background: #020617;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            font-family: var(--font);
+        }
+
+        .btn {
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #022c22;
+            font-weight: 600;
+            border: 1px solid rgba(22, 163, 74, 0.8);
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+            white-space: nowrap;
+        }
+
+        .btn span.icon {
+            font-size: 16px;
+            transform: translateY(-1px);
+        }
+
+        .btn:hover {
+            filter: brightness(1.05);
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(22, 163, 74, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 6px 14px rgba(22, 163, 74, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+            font-weight: 500;
+            padding-inline: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #020617;
+        }
+
+        .btn-danger {
+            background: rgba(127, 29, 29, 0.4);
+            color: #fecaca;
+            border: 1px solid #4b1515;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: rgba(185, 28, 28, 0.7);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border);
+            margin-top: 6px;
+        }
+
+        thead {
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        th,
+        td {
+            padding: 7px 8px;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border-soft);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            color: var(--muted-strong);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+            font-size: 11px;
+        }
+
+        tbody tr {
+            transition: background 0.12s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table select,
+        table input[type="number"],
+        table input[type="date"] {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-alt2);
+            color: var(--text);
+            font-size: 12px;
+            padding: 4px 8px;
+            outline: none;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        table select:focus,
+        table input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+            background: #020617;
+        }
+
+        /* Colorful selects for action/type */
+        select.action.buy,
+        select.type.call {
+            background: rgba(22, 163, 74, 0.15);
+            border-color: rgba(34, 197, 94, 0.8);
+            color: #bbf7d0;
+        }
+
+        select.action.sell,
+        select.type.put {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.8);
+            color: #fecaca;
+        }
+
+        .num {
+            text-align: right;
+            font-feature-settings: "tnum" 1;
+        }
+
+        .readonly {
+            font-variant-numeric: tabular-nums;
+            font-size: 12px;
+            padding-inline: 4px;
+            color: var(--muted);
+        }
+
+        .readonly.positive {
+            color: var(--accent);
+        }
+
+        .readonly.negative {
+            color: var(--danger);
+        }
+
+        .layout-two-col {
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .chart-card {
+            background: radial-gradient(circle at top, #020617 0, #020617 55%);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 14px 16px 16px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+            min-height: 260px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .chart-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--muted);
+        }
+
+        .chart-subtitle {
+            font-size: 11px;
+            color: var(--muted-strong);
+        }
+
+        .chart-header-right {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .chart-range-control {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--muted-strong);
+        }
+
+        .chart-range-control input {
+            width: 70px;
+            background: var(--bg-alt2);
+            border-radius: 999px;
+            border: 1px solid var(--border-soft);
+            padding: 4px 8px;
+            color: var(--text);
+            font-size: 11px;
+            outline: none;
+        }
+
+        .chart-range-control input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.25);
+            background: #020617;
+        }
+
+        canvas {
+            width: 100%;
+            height: 220px;
+            display: block;
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(31, 41, 55, 0.9);
+        }
+
+        .metrics-card {
+            background: radial-gradient(circle at top right, #020617 0, #020617 60%);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 14px;
+            font-size: 12px;
+            align-content: start;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .metric-label {
+            color: var(--muted-strong);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+        }
+
+        .metric-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-value.emphasis {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .metric-value.bad {
+            color: var(--danger);
+        }
+
+        .be-list {
+            font-size: 11px;
+            color: var(--muted);
+            word-break: break-word;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border-soft);
+            color: var(--muted);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+        }
+
+        .badge-dot.green {
+            background: var(--accent);
+        }
+
+        .badge-dot.red {
+            background: var(--danger);
+        }
+
+        .badge-dot.white {
+            background: #f9fafb;
+        }
+
+        .summary-row {
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--muted-strong);
+        }
+
+        .summary-row span.value {
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 960px) {
+            .layout-two-col {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .metrics-card {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .card {
+                padding-inline: 12px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .field-group {
+                width: 100%;
+            }
+
+            .metrics-card {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header>
+            <h1>TA-35 Options Position Simulator</h1>
+            <div class="subtitle">
+                TA-35 options, 1 point = ₪50. Cost is Entry × Qty. Hover % is vs |Max Loss|.
+            </div>
+        </header>
+
+        <!-- TOP: LEGS TABLE -->
+        <section class="card">
+            <div class="section-header">
+                <h2>Option Legs</h2>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="pill"><span style="color:var(--accent);">●</span> Live P/L</div>
+                    <button id="add-leg" class="btn"><span class="icon">＋</span> Add leg</button>
+                </div>
+            </div>
+
+            <div class="controls-row">
+                <div class="field-group">
+                    <label for="underlying">Underlying price (TA-35)</label>
+                    <input type="number" id="underlying" step="0.1" value="3200" />
+                </div>
+                <div class="field-group">
+                    <label for="days">Days to expiration</label>
+                    <input type="number" id="days" step="1" min="0" value="30" />
+                </div>
+
+                <div style="flex:1;"></div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button id="load-csv" class="btn btn-secondary">Load CSV (Add legs)</button>
+                    <button id="save-legs" class="btn btn-secondary">Save positions</button>
+                    <button id="load-legs" class="btn btn-secondary">Load positions</button>
+                    <button id="clear-legs" class="btn btn-secondary">Clear all legs</button>
+
+                    <input type="file" id="csv-file-input" accept=".csv,text/csv" style="display:none;" />
+                    <input type="file" id="load-file-input" accept=".txt,application/json" style="display:none;" />
+                </div>
+            </div>
+
+            <div style="overflow-x:auto;margin-top:4px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Type</th>
+                            <th>Expiration</th>
+                            <th class="num">Strike</th>
+                            <th class="num">Qty</th>
+                            <th class="num">Entry ₪</th>
+                            <th class="num">Current ₪</th>
+                            <th class="num">Comm ₪</th>
+                            <th class="num">Cost ₪</th>
+                            <th class="num">P/L Now ₪</th>
+                            <th class="num">P/L %</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="legs-body"></tbody>
+                </table>
+            </div>
+
+            <div class="summary-row">
+                <div>Net premium (cost): <span id="summary-cost" class="value">₪0.00</span></div>
+                <div>Unrealized P/L: <span id="summary-pl" class="value">₪0.00</span></div>
+            </div>
+        </section>
+
+        <!-- BOTTOM: PAYOFF + METRICS -->
+        <section class="layout-two-col" style="margin-top:18px;">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Payoff Diagram</div>
+                        <div class="chart-subtitle">Hover to see profit / loss (₪ and %) at a TA-35 level.</div>
+                    </div>
+                    <div class="chart-header-right">
+                        <div class="badge"><span class="badge-dot green"></span> Profit</div>
+                        <div class="badge"><span class="badge-dot red"></span> Loss</div>
+                        <div class="badge"><span class="badge-dot white"></span> Current</div>
+                        <div class="chart-range-control">
+                            <span>Range ±</span>
+                            <input type="number" id="range" min="50" step="50" value="500" />
+                            <span>pts</span>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="payoff-canvas"></canvas>
+            </div>
+
+            <aside class="metrics-card">
+                <div class="metric">
+                    <div class="metric-label">Max loss</div>
+                    <div id="max-loss" class="metric-value emphasis bad">₪0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Breakeven price(s)</div>
+                    <div id="breakevens" class="be-list">–</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Underlying now</div>
+                    <div id="metric-underlying" class="metric-value emphasis">0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Hover payoff</div>
+                    <div id="metric-hover" class="metric-value">–</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Net premium (cost)</div>
+                    <div id="metric-cost" class="metric-value">₪0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Unrealized P/L</div>
+                    <div id="metric-pl" class="metric-value">₪0.00</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Days to expiry</div>
+                    <div id="metric-days" class="metric-value">30</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Legs</div>
+                    <div id="metric-legs" class="metric-value">0</div>
+                </div>
+            </aside>
+        </section>
+    </div>
+
+    <script>
+        (function () {
+            const POINT_VALUE = 50;
+            const DEFAULT_ENTRY_FROM_CSV = 1000;
+            const CHART_PADDING = { left: 42, right: 14, top: 12, bottom: 26 };
+
+            const legsBody = document.getElementById("legs-body");
+            const addLegBtn = document.getElementById("add-leg");
+            const clearLegsBtn = document.getElementById("clear-legs");
+            const saveLegsBtn = document.getElementById("save-legs");
+            const loadLegsBtn = document.getElementById("load-legs");
+            const loadFileInput = document.getElementById("load-file-input");
+
+            const loadCsvBtn = document.getElementById("load-csv");
+            const csvFileInput = document.getElementById("csv-file-input");
+
+            const underlyingInput = document.getElementById("underlying");
+            const daysInput = document.getElementById("days");
+            const rangeInput = document.getElementById("range");
+
+            const summaryCost = document.getElementById("summary-cost");
+            const summaryPL = document.getElementById("summary-pl");
+
+            const metricMaxLoss = document.getElementById("max-loss");
+            const metricBreakevens = document.getElementById("breakevens");
+            const metricUnderlying = document.getElementById("metric-underlying");
+            const metricHover = document.getElementById("metric-hover");
+            const metricCost = document.getElementById("metric-cost");
+            const metricPL = document.getElementById("metric-pl");
+            const metricDays = document.getElementById("metric-days");
+            const metricLegs = document.getElementById("metric-legs");
+
+            const canvas = document.getElementById("payoff-canvas");
+            const ctx = canvas.getContext("2d");
+
+            function formatCurrency(v) {
+                if (!isFinite(v)) v = 0;
+                return "₪" + v.toFixed(2);
+            }
+            function formatPercent(v) {
+                if (!isFinite(v)) return "0.0%";
+                return v.toFixed(1) + "%";
+            }
+            function parseNum(value) {
+                const n = parseFloat(String(value).replace(/\s/g, ""));
+                return isNaN(n) ? 0 : n;
+            }
+
+            function createLegRow(defaults = {}) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>
+            <select class="action">
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </select>
+          </td>
+          <td>
+            <select class="type">
+              <option value="call">Call</option>
+              <option value="put">Put</option>
+            </select>
+          </td>
+          <td><input type="date" class="expiration" /></td>
+          <td class="num"><input type="number" class="strike" step="1" /></td>
+          <td class="num"><input type="number" class="qty" step="1" /></td>
+          <td class="num"><input type="number" class="entry" step="0.01" /></td>
+          <td class="num"><input type="number" class="current" step="0.01" /></td>
+          <td class="num"><input type="number" class="comm" step="0.01" /></td>
+          <td class="num"><span class="readonly cost-cell">₪0.00</span></td>
+          <td class="num"><span class="readonly pl-cell">₪0.00</span></td>
+          <td class="num"><span class="readonly pl-pct-cell">0.0%</span></td>
+          <td class="num"><button class="btn btn-danger remove-leg">✕</button></td>
+        `;
+
+                if (defaults.action) tr.querySelector(".action").value = defaults.action;
+                if (defaults.type) tr.querySelector(".type").value = defaults.type;
+                if (defaults.expiration) tr.querySelector(".expiration").value = defaults.expiration;
+                if (defaults.strike !== undefined) tr.querySelector(".strike").value = defaults.strike;
+                if (defaults.qty !== undefined) tr.querySelector(".qty").value = defaults.qty;
+                if (defaults.entry !== undefined) tr.querySelector(".entry").value = defaults.entry;
+                if (defaults.current !== undefined) tr.querySelector(".current").value = defaults.current;
+                if (defaults.comm !== undefined) tr.querySelector(".comm").value = defaults.comm;
+
+                legsBody.appendChild(tr);
+            }
+
+            function getLegs() {
+                const rows = Array.from(legsBody.querySelectorAll("tr"));
+                return rows.map((row) => {
+                    const action = row.querySelector(".action").value;
+                    const type = row.querySelector(".type").value;
+                    const expiration = row.querySelector(".expiration").value || "";
+                    const strike = parseNum(row.querySelector(".strike").value);
+                    const qty = parseNum(row.querySelector(".qty").value);
+                    const entry = parseNum(row.querySelector(".entry").value);
+                    const current = parseNum(row.querySelector(".current").value);
+                    const comm = parseNum(row.querySelector(".comm").value);
+
+                    return { row, action, type, expiration, strike, qty, entry, current, comm };
+                });
+            }
+
+            function styleActionType(leg) {
+                const actionEl = leg.row.querySelector(".action");
+                const typeEl = leg.row.querySelector(".type");
+                actionEl.classList.remove("buy", "sell");
+                typeEl.classList.remove("call", "put");
+                if (leg.action === "buy") actionEl.classList.add("buy");
+                if (leg.action === "sell") actionEl.classList.add("sell");
+                if (leg.type === "call") typeEl.classList.add("call");
+                if (leg.type === "put") typeEl.classList.add("put");
+            }
+
+            // Cost: Entry × Qty, with sign (buy negative, sell positive)
+            function legCost(leg) {
+                const sign = leg.action === "buy" ? -1 : 1;
+                return leg.entry * leg.qty * sign;
+            }
+
+            // Current P/L: (Current – Entry) × Qty, sign for buy/sell, minus comm
+            function legPLNow(leg) {
+                const sign = leg.action === "buy" ? 1 : -1;
+                const diff = (leg.current - leg.entry) * leg.qty * sign;
+                return diff - leg.comm;
+            }
+
+            // P/L at expiry in ₪
+            function legPLAtPrice(leg, S) {
+                if (!leg.strike || !leg.qty || !leg.entry) return 0;
+                const sign = leg.action === "buy" ? 1 : -1;
+                const intrinsicPoints =
+                    leg.type === "call" ? Math.max(S - leg.strike, 0)
+                        : Math.max(leg.strike - S, 0);
+
+                const payoffCash = intrinsicPoints * POINT_VALUE * leg.qty;
+                const premiumCash = leg.entry * leg.qty;
+                const longPL = payoffCash - premiumCash;
+                return longPL * sign - leg.comm;
+            }
+
+            // ----- SAVE / LOAD JSON (TXT) -----
+            function serializeState() {
+                const legs = getLegs().map((leg) => ({
+                    action: leg.action,
+                    type: leg.type,
+                    expiration: leg.expiration,
+                    strike: leg.strike,
+                    qty: leg.qty,
+                    entry: leg.entry,
+                    current: leg.current,
+                    comm: leg.comm,
+                }));
+                return {
+                    underlying: parseNum(underlyingInput.value) || 0,
+                    days: parseNum(daysInput.value) || 0,
+                    range: parseNum(rangeInput.value) || 500,
+                    legs,
+                };
+            }
+
+            function downloadText(filename, text) {
+                const blob = new Blob([text], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function loadStateFromObject(obj) {
+                if (!obj || typeof obj !== "object") return;
+                legsBody.innerHTML = "";
+
+                if (Array.isArray(obj.legs)) {
+                    obj.legs.forEach((leg) => {
+                        createLegRow({
+                            action: leg.action,
+                            type: leg.type,
+                            expiration: leg.expiration,
+                            strike: leg.strike,
+                            qty: leg.qty,
+                            entry: leg.entry,
+                            current: leg.current,
+                            comm: leg.comm,
+                        });
+                    });
+                }
+                if (obj.underlying !== undefined) underlyingInput.value = obj.underlying;
+                if (obj.days !== undefined) daysInput.value = obj.days;
+                if (obj.range !== undefined) rangeInput.value = obj.range;
+
+                recalc();
+            }
+
+            // ----- CSV LOAD (UPDATED: totals -> per-contract price) -----
+            function splitCsvLine(line, delimiter) {
+                const out = [];
+                let cur = "";
+                let inQuotes = false;
+
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (ch === '"') {
+                        if (inQuotes && line[i + 1] === '"') {
+                            cur += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (ch === delimiter && !inQuotes) {
+                        out.push(cur);
+                        cur = "";
+                    } else {
+                        cur += ch;
+                    }
+                }
+                out.push(cur);
+                return out.map(s => s.trim());
+            }
+
+            function detectDelimiter(lines) {
+                const sample = lines.find(l => l.includes(",") || l.includes(";")) || "";
+                return (sample.split(";").length > sample.split(",").length) ? ";" : ",";
+            }
+
+            function safeDiv(total, qty) {
+                if (!isFinite(total) || !isFinite(qty) || qty === 0) return 0;
+                return total / qty;
+            }
+
+            function parseCsvRows_NewFormat(text) {
+                const cleaned = text
+                    .replace(/^\uFEFF/, "")
+                    .replace(/\r\n/g, "\n")
+                    .replace(/\r/g, "\n");
+
+                const lines = cleaned
+                    .split("\n")
+                    .map(l => l.trim())
+                    .filter(Boolean);
+
+                if (!lines.length) return [];
+
+                const delimiter = detectDelimiter(lines);
+
+                // Column indexes (0-based):
+                // A=0 callQty
+                // F=5 callTotalPrice
+                // N=13 strike
+                // V=21 putTotalPrice
+                // AA=26 putQty
+                const IDX = {
+                    callQty: 0,
+                    callTotal: 5,
+                    strike: 13,
+                    putTotal: 21,
+                    putQty: 26
+                };
+
+                const rows = [];
+
+                for (const line of lines) {
+                    const cols = splitCsvLine(line, delimiter);
+                    if (cols.length <= IDX.putQty) continue;
+
+                    const strike = parseNum(cols[IDX.strike]);
+                    if (!isFinite(strike) || strike === 0) continue; // skip headers/invalid
+
+                    const callQty = parseNum(cols[IDX.callQty]);
+                    const callTotal = parseNum(cols[IDX.callTotal]);
+
+                    const putQty = parseNum(cols[IDX.putQty]);
+                    const putTotal = parseNum(cols[IDX.putTotal]);
+
+                    // If nothing on this row, skip
+                    const hasCall = callQty && callQty !== 0 && callTotal && callTotal !== 0;
+                    const hasPut = putQty && putQty !== 0 && putTotal && putTotal !== 0;
+                    if (!hasCall && !hasPut) continue;
+
+                    rows.push({
+                        strike,
+                        callQty,
+                        callTotal,
+                        putQty,
+                        putTotal
+                    });
+                }
+
+                return rows;
+            }
+
+            function addLegsFromCsvRows_NewFormat(rows) {
+                let added = 0;
+
+                for (const r of rows) {
+                    // Sell CALL: price = F / A
+                    if (r.callQty && r.callQty !== 0 && r.callTotal && r.callTotal !== 0) {
+                        const callPrice = safeDiv(r.callTotal, r.callQty);
+                        createLegRow({
+                            action: "sell",
+                            type: "call",
+                            strike: r.strike,
+                            qty: r.callQty,
+                            entry: callPrice,
+                            current: callPrice, // treat derived price as the market price too
+                            comm: 0,
+                            expiration: ""
+                        });
+                        added++;
+                    }
+
+                    // Sell PUT: price = V / AA
+                    if (r.putQty && r.putQty !== 0 && r.putTotal && r.putTotal !== 0) {
+                        const putPrice = safeDiv(r.putTotal, r.putQty);
+                        createLegRow({
+                            action: "sell",
+                            type: "put",
+                            strike: r.strike,
+                            qty: r.putQty,
+                            entry: putPrice,
+                            current: putPrice, // treat derived price as the market price too
+                            comm: 0,
+                            expiration: ""
+                        });
+                        added++;
+                    }
+                }
+
+                return added;
+            }
+
+            // CSV button → picker
+            loadCsvBtn.addEventListener("click", () => csvFileInput.click());
+
+            // CSV picker handler
+            csvFileInput.addEventListener("change", (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const text = String(event.target.result || "");
+                        const rows = parseCsvRows_NewFormat(text);
+                        const added = addLegsFromCsvRows_NewFormat(rows);
+                        recalc();
+
+                        if (!added) {
+                            alert("CSV loaded, but no valid rows were found. Expected A/F/N/V/AA.");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("Failed to load CSV.");
+                    } finally {
+                        csvFileInput.value = "";
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+
+            // ----- CALC + CHART -----
+            function recalc() {
+                const underlying = parseNum(underlyingInput.value) || 0;
+                const days = parseNum(daysInput.value) || 0;
+                const legs = getLegs();
+
+                let totalCost = 0;
+                let totalPL = 0;
+
+                legs.forEach((leg) => {
+                    styleActionType(leg);
+
+                    const cost = legCost(leg);
+                    const plNow = legPLNow(leg);
+
+                    totalCost += cost;
+                    totalPL += plNow;
+
+                    const costCell = leg.row.querySelector(".cost-cell");
+                    const plCell = leg.row.querySelector(".pl-cell");
+                    const plPctCell = leg.row.querySelector(".pl-pct-cell");
+
+                    costCell.textContent = formatCurrency(cost);
+                    plCell.textContent = formatCurrency(plNow);
+
+                    // Per-leg % based on its own entry×qty (uncapped)
+                    const invested = leg.entry * leg.qty;
+                    const pct = invested !== 0 ? (plNow / Math.abs(invested)) * 100 : 0;
+                    plPctCell.textContent = formatPercent(pct);
+
+                    costCell.classList.remove("positive", "negative");
+                    plCell.classList.remove("positive", "negative");
+                    plPctCell.classList.remove("positive", "negative");
+
+                    if (cost > 0) costCell.classList.add("positive");
+                    if (cost < 0) costCell.classList.add("negative");
+
+                    if (plNow > 0) { plCell.classList.add("positive"); plPctCell.classList.add("positive"); }
+                    if (plNow < 0) { plCell.classList.add("negative"); plPctCell.classList.add("negative"); }
+                });
+
+                summaryCost.textContent = formatCurrency(totalCost);
+                summaryPL.textContent = formatCurrency(totalPL);
+
+                metricUnderlying.textContent = underlying.toFixed(2);
+                metricCost.textContent = formatCurrency(totalCost);
+                metricPL.textContent = formatCurrency(totalPL);
+                metricDays.textContent = days.toFixed(0);
+                metricLegs.textContent = legs.length.toString();
+                metricHover.textContent = "–";
+
+                drawPayoff(legs, underlying, null);
+            }
+
+            function resizeCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            function drawGrid(ctx, rect, xTicks, yTicks, zeroY) {
+                ctx.save();
+                ctx.strokeStyle = "rgba(55,65,81,0.8)";
+                ctx.lineWidth = 1;
+
+                xTicks.forEach((x) => {
+                    ctx.beginPath();
+                    ctx.moveTo(x, rect.top);
+                    ctx.lineTo(x, rect.bottom);
+                    ctx.stroke();
+                });
+
+                yTicks.forEach((y) => {
+                    ctx.beginPath();
+                    ctx.moveTo(rect.left, y);
+                    ctx.lineTo(rect.right, y);
+                    ctx.stroke();
+                });
+
+                ctx.strokeStyle = "rgba(156,163,175,0.9)";
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(rect.left, zeroY);
+                ctx.lineTo(rect.right, zeroY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
+            }
+
+            function drawPayoff(legs, underlying, hoverPrice) {
+                resizeCanvas();
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+
+                ctx.clearRect(0, 0, width, height);
+
+                if (!legs.length || !width || !height) return;
+
+                const padding = CHART_PADDING;
+                const rect = {
+                    left: padding.left,
+                    top: padding.top,
+                    right: width - padding.right,
+                    bottom: height - padding.bottom,
+                };
+                const chartWidth = rect.right - rect.left;
+                const chartHeight = rect.bottom - rect.top;
+
+                const range = Math.max(parseNum(rangeInput.value) || 500, 50);
+                const step = Math.max(10, range / 20);
+
+                const minPrice = underlying - range;
+                const maxPrice = underlying + range;
+
+                const points = [];
+                for (let S = minPrice; S <= maxPrice + 0.001; S += step) {
+                    let total = 0;
+                    legs.forEach((leg) => { total += legPLAtPrice(leg, S); });
+                    points.push({ S, P: total });
+                }
+                if (!points.length) return;
+
+                let minP = 0, maxP = 0;
+                points.forEach((p) => { if (p.P < minP) minP = p.P; if (p.P > maxP) maxP = p.P; });
+
+                if (minP === maxP) { minP -= 100; maxP += 100; }
+                else { const pad = (maxP - minP) * 0.1; minP -= pad; maxP += pad; }
+
+                const priceToX = (S) => rect.left + ((S - minPrice) / (maxPrice - minPrice)) * chartWidth;
+                const pnlToY = (P) => rect.bottom - ((P - minP) / (maxP - minP)) * chartHeight;
+                const zeroY = pnlToY(0);
+
+                const xTicks = [];
+                const yTicks = [];
+                const xTickStep = range >= 400 ? 100 : range >= 200 ? 50 : 25;
+                for (let S = minPrice; S <= maxPrice + 0.001; S += xTickStep) xTicks.push(priceToX(S));
+                const yStep = (maxP - minP) / 4;
+                for (let i = 1; i < 4; i++) yTicks.push(pnlToY(minP + yStep * i));
+                drawGrid(ctx, rect, xTicks, yTicks, zeroY);
+
+                // Fill profit/loss
+                for (let i = 0; i < points.length - 1; i++) {
+                    const a = points[i], b = points[i + 1];
+                    const x1 = priceToX(a.S), y1 = pnlToY(a.P);
+                    const x2 = priceToX(b.S), y2 = pnlToY(b.P);
+
+                    const sameSign = (a.P >= 0) === (b.P >= 0);
+                    const color = a.P >= 0 ? "rgba(34,197,94,0.22)" : "rgba(239,68,68,0.24)";
+
+                    if (sameSign) {
+                        ctx.beginPath();
+                        ctx.moveTo(x1, zeroY); ctx.lineTo(x1, y1); ctx.lineTo(x2, y2); ctx.lineTo(x2, zeroY);
+                        ctx.closePath();
+                        ctx.fillStyle = color; ctx.fill();
+                    } else {
+                        const t = a.P === b.P ? 0.5 : a.P / (a.P - b.P);
+                        const xMid = x1 + (x2 - x1) * t;
+                        const yMid = pnlToY(0);
+
+                        const color1 = a.P >= 0 ? "rgba(34,197,94,0.22)" : "rgba(239,68,68,0.24)";
+                        ctx.beginPath();
+                        ctx.moveTo(x1, zeroY); ctx.lineTo(x1, y1); ctx.lineTo(xMid, yMid); ctx.lineTo(xMid, zeroY);
+                        ctx.closePath(); ctx.fillStyle = color1; ctx.fill();
+
+                        const color2 = b.P >= 0 ? "rgba(34,197,94,0.22)" : "rgba(239,68,68,0.24)";
+                        ctx.beginPath();
+                        ctx.moveTo(xMid, zeroY); ctx.lineTo(xMid, yMid); ctx.lineTo(x2, y2); ctx.lineTo(x2, zeroY);
+                        ctx.closePath(); ctx.fillStyle = color2; ctx.fill();
+                    }
+                }
+
+                // payoff line
+                ctx.beginPath();
+                points.forEach((p, idx) => {
+                    const x = priceToX(p.S), y = pnlToY(p.P);
+                    if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                ctx.strokeStyle = "rgba(248,250,252,0.9)";
+                ctx.lineWidth = 1.3;
+                ctx.stroke();
+
+                // current underlying line
+                const xU = priceToX(underlying);
+                ctx.save();
+                ctx.setLineDash([6, 6]);
+                ctx.strokeStyle = "rgba(248,250,252,0.9)";
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(xU, rect.top); ctx.lineTo(xU, rect.bottom); ctx.stroke();
+                ctx.restore();
+
+                // axis labels
+                ctx.fillStyle = "rgba(156,163,175,0.95)";
+                ctx.font = "10px " + getComputedStyle(document.body).fontFamily;
+                ctx.textAlign = "center"; ctx.textBaseline = "top";
+                for (let S = minPrice; S <= maxPrice + 0.001; S += xTickStep) ctx.fillText(S.toFixed(0), priceToX(S), rect.bottom + 4);
+
+                ctx.textAlign = "right"; ctx.textBaseline = "middle";
+                [minP, (minP + maxP) / 2, maxP].forEach((P) => ctx.fillText(formatCurrency(P), rect.left - 6, pnlToY(P)));
+
+                // max loss + breakevens
+                let maxLoss = Infinity;
+                points.forEach((p) => { if (p.P < maxLoss) maxLoss = p.P; });
+                metricMaxLoss.textContent = formatCurrency(maxLoss);
+                const absMaxLoss = Math.abs(maxLoss);
+
+                const breakevens = [];
+                for (let i = 0; i < points.length - 1; i++) {
+                    const a = points[i], b = points[i + 1];
+                    if (a.P === 0) breakevens.push(a.S);
+                    if ((a.P > 0 && b.P < 0) || (a.P < 0 && b.P > 0)) {
+                        const t = a.P / (a.P - b.P);
+                        breakevens.push(a.S + (b.S - a.S) * t);
+                    }
+                }
+                if (!breakevens.length) metricBreakevens.textContent = "None in sampled range";
+                else {
+                    const uniq = Array.from(new Set(breakevens.map((x) => x.toFixed(1)))).map(parseFloat).sort((a, b) => a - b);
+                    metricBreakevens.textContent = uniq.map((s) => s.toFixed(1)).join(", ");
+                }
+
+                // hover
+                if (hoverPrice != null && hoverPrice >= minPrice && hoverPrice <= maxPrice) {
+                    const hoverPL = legs.reduce((sum, leg) => sum + legPLAtPrice(leg, hoverPrice), 0);
+                    const hoverPct = absMaxLoss ? (hoverPL / absMaxLoss) * 100 : 0;
+
+                    const xH = priceToX(hoverPrice);
+                    const yH = pnlToY(hoverPL);
+
+                    ctx.save();
+                    ctx.setLineDash([4, 4]);
+                    ctx.strokeStyle = "rgba(96,165,250,0.95)";
+                    ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(xH, rect.top); ctx.lineTo(xH, rect.bottom); ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.beginPath();
+                    ctx.arc(xH, yH, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(248,250,252,0.96)";
+                    ctx.fill();
+                    ctx.restore();
+
+                    const label = "S=" + hoverPrice.toFixed(1) + "  P/L=" + formatCurrency(hoverPL) + " (" + formatPercent(hoverPct) + ")";
+                    const font = getComputedStyle(document.body).fontFamily;
+                    ctx.font = "11px " + font;
+                    const textWidth = ctx.measureText(label).width;
+
+                    const boxPaddingX = 6;
+                    const boxWidth = textWidth + boxPaddingX * 2;
+                    const boxHeight = 18;
+                    let boxX = xH + 8;
+                    const boxY = rect.top + 6;
+                    if (boxX + boxWidth > rect.right) boxX = rect.right - boxWidth - 4;
+                    if (boxX < rect.left + 4) boxX = rect.left + 4;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.fillStyle = "rgba(15,23,42,0.96)";
+                    ctx.strokeStyle = "rgba(55,65,81,0.95)";
+                    ctx.lineWidth = 1;
+                    if (ctx.roundRect) ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 6);
+                    else ctx.rect(boxX, boxY, boxWidth, boxHeight);
+                    ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = "rgba(249,250,251,0.96)";
+                    ctx.textAlign = "left"; ctx.textBaseline = "top";
+                    ctx.fillText(label, boxX + boxPaddingX, boxY + 3);
+                    ctx.restore();
+
+                    metricHover.textContent = "S=" + hoverPrice.toFixed(1) + " → " + formatCurrency(hoverPL) + " (" + formatPercent(hoverPct) + ")";
+                }
+            }
+
+            // ----- EVENTS -----
+            addLegBtn.addEventListener("click", () => { createLegRow(); recalc(); });
+
+            clearLegsBtn.addEventListener("click", () => { legsBody.innerHTML = ""; recalc(); });
+
+            saveLegsBtn.addEventListener("click", () => {
+                const json = JSON.stringify(serializeState(), null, 2);
+                downloadText("ta35_positions.txt", json);
+            });
+
+            loadLegsBtn.addEventListener("click", () => loadFileInput.click());
+
+            loadFileInput.addEventListener("change", (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try { loadStateFromObject(JSON.parse(event.target.result)); }
+                    catch { alert("Failed to load positions file (invalid JSON)."); }
+                    finally { loadFileInput.value = ""; }
+                };
+                reader.readAsText(file);
+            });
+
+            legsBody.addEventListener("click", (e) => {
+                if (e.target.classList.contains("remove-leg")) {
+                    e.target.closest("tr")?.remove();
+                    recalc();
+                }
+            });
+
+            ["input", "change"].forEach((ev) => {
+                legsBody.addEventListener(ev, () => recalc());
+                underlyingInput.addEventListener(ev, () => recalc());
+                daysInput.addEventListener(ev, () => recalc());
+                rangeInput.addEventListener(ev, () => recalc());
+            });
+
+            window.addEventListener("resize", () => drawPayoff(getLegs(), parseNum(underlyingInput.value) || 0, null));
+
+            canvas.addEventListener("mousemove", (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = canvas.clientWidth;
+                const chartLeft = CHART_PADDING.left;
+                const chartRight = width - CHART_PADDING.right;
+
+                const underlying = parseNum(underlyingInput.value) || 0;
+                const legs = getLegs();
+                if (!legs.length) return;
+
+                const range = Math.max(parseNum(rangeInput.value) || 500, 50);
+                const minPrice = underlying - range;
+                const maxPrice = underlying + range;
+                const chartWidth = chartRight - chartLeft;
+                const rel = (x - chartLeft) / chartWidth;
+
+                if (rel < 0 || rel > 1) {
+                    drawPayoff(legs, underlying, null);
+                    metricHover.textContent = "–";
+                    return;
+                }
+
+                const hoverPrice = minPrice + rel * (maxPrice - minPrice);
+                drawPayoff(legs, underlying, hoverPrice);
+            });
+
+            canvas.addEventListener("mouseleave", () => {
+                drawPayoff(getLegs(), parseNum(underlyingInput.value) || 0, null);
+                metricHover.textContent = "–";
+            });
+
+            // Start empty (you can load CSV / JSON)
+            recalc();
+        })();
+    </script>
+</body>
+
+</html>
