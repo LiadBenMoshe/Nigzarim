@@ -1,24 +1,28 @@
 export async function onRequest(context) {
-  const auth = context.request.headers.get("Authorization") || "";
-  const expectedUser = "user";
-  const expectedPass = context.env.PASSWORD || "welcome";
 
-  const isAuthorized = (() => {
-    if (!auth.startsWith("Basic ")) return false;
-    const decoded = atob(auth.slice(6));
-    const [u, p] = decoded.split(":");
-    return p === expectedPass;
-  })();
+    if (context.env.DISABLE_AUTH === "true") {
+        return context.next();
+    }
+    const auth = context.request.headers.get("Authorization") || "";
+    const expectedUser = "user";
+    const expectedPass = context.env.PASSWORD || "welcome";
 
-  if (!isAuthorized) {
-    return new Response("Authentication required", {
-      status: 401,
-      headers: {
-        "WWW-Authenticate": 'Basic realm="TA-35 Protected", charset="UTF-8"',
-        "Cache-Control": "no-store",
-      },
-    });
-  }
+    const isAuthorized = (() => {
+        if (!auth.startsWith("Basic ")) return false;
+        const decoded = atob(auth.slice(6));
+        const [u, p] = decoded.split(":");
+        return p === expectedPass;
+    })();
 
-  return context.next();
+    if (!isAuthorized) {
+        return new Response("Authentication required", {
+            status: 401,
+            headers: {
+                "WWW-Authenticate": 'Basic realm="TA-35 Protected", charset="UTF-8"',
+                "Cache-Control": "no-store",
+            },
+        });
+    }
+
+    return context.next();
 }
